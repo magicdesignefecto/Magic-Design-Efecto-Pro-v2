@@ -127,6 +127,126 @@ export const DashboardModule = {
                     .sections-grid { grid-template-columns: 1fr; }
                 }
 
+                /* Mobile Responsive */
+                @media (max-width: 600px) {
+                    .dashboard-page {
+                        padding: 0;
+                        overflow-x: hidden;
+                    }
+
+                    .dashboard-header {
+                        margin-bottom: 20px;
+                    }
+
+                    .dashboard-header h2 {
+                        font-size: 1.4rem;
+                    }
+
+                    .stats-grid {
+                        grid-template-columns: repeat(2, 1fr);
+                        gap: 12px;
+                        margin-bottom: 20px;
+                    }
+
+                    .stat-card {
+                        padding: 16px;
+                        border-radius: 16px;
+                    }
+
+                    .stat-card:hover {
+                        transform: none;
+                    }
+
+                    .stat-icon {
+                        width: 40px;
+                        height: 40px;
+                        font-size: 1rem;
+                        margin-bottom: 12px;
+                    }
+
+                    .stat-value {
+                        font-size: 1.5rem;
+                    }
+
+                    .stat-value.money {
+                        font-size: 1.1rem;
+                        word-break: break-word;
+                    }
+
+                    .stat-label {
+                        font-size: 0.65rem;
+                    }
+
+                    .stat-subtitle {
+                        font-size: 0.7rem;
+                    }
+
+                    .sections-grid {
+                        gap: 16px;
+                    }
+
+                    .section-card {
+                        padding: 16px;
+                        border-radius: 16px;
+                    }
+
+                    .section-title {
+                        font-size: 0.9rem;
+                        margin-bottom: 16px;
+                    }
+
+                    .section-title i {
+                        width: 28px;
+                        height: 28px;
+                        font-size: 0.8rem;
+                    }
+
+                    .lead-item {
+                        padding: 12px;
+                        gap: 10px;
+                    }
+
+                    .lead-avatar {
+                        width: 36px;
+                        height: 36px;
+                        font-size: 0.85rem;
+                    }
+
+                    .lead-name {
+                        font-size: 0.85rem;
+                    }
+
+                    .lead-company {
+                        font-size: 0.75rem;
+                    }
+
+                    .lead-value {
+                        font-size: 0.8rem;
+                    }
+
+                    .goal-item {
+                        padding: 12px;
+                    }
+
+                    .goal-name {
+                        font-size: 0.85rem;
+                    }
+
+                    .goal-values {
+                        font-size: 0.7rem;
+                    }
+                }
+
+                @media (max-width: 380px) {
+                    .stats-grid {
+                        grid-template-columns: 1fr;
+                    }
+
+                    .stat-value.money {
+                        font-size: 1rem;
+                    }
+                }
+
                 .section-card {
                     background: var(--bg-card);
                     border: 1px solid var(--border-color);
