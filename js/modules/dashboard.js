@@ -3,242 +3,409 @@ import { Formatters } from '../utils/formatters.js';
 
 export const DashboardModule = {
     render: async () => {
-        const data = await DashboardService.getData();
-        const { stats, recentLeads, goalsProgress } = data;
-
-        const content = `
+        return `
             <style>
-                .dash-page { padding: 0; }
-                
-                .kpi-grid { 
-                    display: grid; 
-                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
-                    gap: 20px; 
-                    margin-bottom: 30px; 
+                .dashboard-page {
+                    padding: 0;
                 }
-                
-                .kpi-card { 
-                    background: var(--bg-card); 
-                    padding: 24px; 
-                    border-radius: 16px; 
+
+                .dashboard-header {
+                    margin-bottom: 28px;
+                }
+
+                .dashboard-header h2 {
+                    font-size: 1.75rem;
+                    font-weight: 800;
+                    color: var(--text-main);
+                    margin: 0 0 4px 0;
+                    letter-spacing: -0.02em;
+                }
+
+                .dashboard-header p {
+                    color: var(--text-muted);
+                    font-size: 0.9rem;
+                    margin: 0;
+                }
+
+                /* Stats Grid - Modern Cards */
+                .stats-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                    gap: 20px;
+                    margin-bottom: 32px;
+                }
+
+                .stat-card {
+                    background: var(--bg-card);
                     border: 1px solid var(--border-color);
-                    display: flex; 
-                    flex-direction: column; 
-                    gap: 8px;
+                    border-radius: 20px;
+                    padding: 24px;
+                    position: relative;
+                    overflow: hidden;
+                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 }
-                
-                .kpi-icon {
-                    width: 44px;
-                    height: 44px;
-                    border-radius: 12px;
+
+                .stat-card:hover {
+                    transform: translateY(-4px);
+                    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+                }
+
+                .stat-card::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    height: 4px;
+                    border-radius: 20px 20px 0 0;
+                }
+
+                .stat-card.blue::before { background: linear-gradient(90deg, #3B82F6, #60A5FA); }
+                .stat-card.purple::before { background: linear-gradient(90deg, #8B5CF6, #A78BFA); }
+                .stat-card.amber::before { background: linear-gradient(90deg, #F59E0B, #FBBF24); }
+                .stat-card.green::before { background: linear-gradient(90deg, #10B981, #34D399); }
+                .stat-card.rose::before { background: linear-gradient(90deg, #F43F5E, #FB7185); }
+                .stat-card.cyan::before { background: linear-gradient(90deg, #06B6D4, #22D3EE); }
+
+                .stat-icon {
+                    width: 48px;
+                    height: 48px;
+                    border-radius: 14px;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    font-size: 1.3rem;
-                    margin-bottom: 4px;
-                }
-                
-                .kpi-title { 
-                    font-size: 0.8rem; 
-                    color: var(--text-muted); 
-                    font-weight: 600; 
-                    text-transform: uppercase; 
-                    letter-spacing: 0.5px; 
-                }
-                
-                .kpi-value { 
-                    font-size: 1.75rem; 
-                    font-weight: 800; 
-                    color: var(--text-main); 
-                }
-                
-                .kpi-trend { 
-                    font-size: 0.75rem; 
-                    color: var(--text-muted);
+                    font-size: 1.25rem;
+                    margin-bottom: 16px;
                 }
 
-                .dash-grid {
+                .stat-card.blue .stat-icon { background: rgba(59, 130, 246, 0.12); color: #3B82F6; }
+                .stat-card.purple .stat-icon { background: rgba(139, 92, 246, 0.12); color: #8B5CF6; }
+                .stat-card.amber .stat-icon { background: rgba(245, 158, 11, 0.12); color: #F59E0B; }
+                .stat-card.green .stat-icon { background: rgba(16, 185, 129, 0.12); color: #10B981; }
+                .stat-card.rose .stat-icon { background: rgba(244, 63, 94, 0.12); color: #F43F5E; }
+                .stat-card.cyan .stat-icon { background: rgba(6, 182, 212, 0.12); color: #06B6D4; }
+
+                .stat-label {
+                    font-size: 0.75rem;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    letter-spacing: 0.05em;
+                    color: var(--text-muted);
+                    margin-bottom: 6px;
+                }
+
+                .stat-value {
+                    font-size: 2rem;
+                    font-weight: 800;
+                    color: var(--text-main);
+                    line-height: 1.1;
+                    letter-spacing: -0.02em;
+                }
+
+                .stat-value.money {
+                    font-size: 1.5rem;
+                    background: linear-gradient(135deg, #10B981, #059669);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
+                }
+
+                .stat-subtitle {
+                    font-size: 0.8rem;
+                    color: var(--text-muted);
+                    margin-top: 4px;
+                }
+
+                /* Sections Grid */
+                .sections-grid {
                     display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+                    grid-template-columns: 1fr 1fr;
                     gap: 24px;
                 }
 
-                .dash-section { 
-                    background: var(--bg-card); 
-                    border-radius: 16px; 
-                    border: 1px solid var(--border-color); 
+                @media (max-width: 900px) {
+                    .sections-grid { grid-template-columns: 1fr; }
+                }
+
+                .section-card {
+                    background: var(--bg-card);
+                    border: 1px solid var(--border-color);
+                    border-radius: 20px;
                     padding: 24px;
                 }
-                
-                .section-header { 
-                    display: flex; 
-                    justify-content: space-between; 
-                    align-items: center; 
-                    margin-bottom: 20px; 
+
+                .section-title {
+                    font-size: 1rem;
+                    font-weight: 700;
+                    color: var(--text-main);
+                    margin: 0 0 20px 0;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
                 }
-                
-                .section-title { 
-                    font-size: 1rem; 
-                    font-weight: 700; 
-                    color: var(--text-main); 
-                    margin: 0; 
+
+                .section-title i {
+                    width: 32px;
+                    height: 32px;
+                    border-radius: 10px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 0.9rem;
                 }
-                
-                .activity-item { 
-                    display: flex; 
-                    align-items: center; 
-                    padding: 12px 0; 
-                    border-bottom: 1px solid var(--border-color); 
+
+                .section-title.leads i { background: rgba(139, 92, 246, 0.12); color: #8B5CF6; }
+                .section-title.goals i { background: rgba(245, 158, 11, 0.12); color: #F59E0B; }
+
+                /* Recent Leads List */
+                .leads-list {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 12px;
                 }
-                
-                .activity-item:last-child { border-bottom: none; }
-                
-                .act-icon { 
-                    width: 40px; 
-                    height: 40px; 
-                    border-radius: 10px; 
-                    background: rgba(59, 130, 246, 0.15); 
-                    color: #3B82F6; 
-                    display: flex; 
-                    align-items: center; 
-                    justify-content: center; 
-                    font-weight: 700; 
-                    margin-right: 14px; 
+
+                .lead-item {
+                    display: flex;
+                    align-items: center;
+                    gap: 14px;
+                    padding: 14px;
+                    background: var(--bg-body);
+                    border-radius: 14px;
+                    transition: all 0.2s;
                 }
-                
-                .act-info { flex: 1; }
-                .act-title { font-weight: 600; font-size: 0.9rem; color: var(--text-main); }
-                .act-meta { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
-                .act-amount { font-weight: 700; color: #10B981; font-size: 0.85rem; }
+
+                .lead-item:hover {
+                    background: var(--border-color);
+                }
+
+                .lead-avatar {
+                    width: 44px;
+                    height: 44px;
+                    border-radius: 12px;
+                    background: linear-gradient(135deg, #8B5CF6, #A78BFA);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+                    font-weight: 700;
+                    font-size: 1rem;
+                    flex-shrink: 0;
+                }
+
+                .lead-info {
+                    flex: 1;
+                    min-width: 0;
+                }
+
+                .lead-name {
+                    font-weight: 600;
+                    color: var(--text-main);
+                    font-size: 0.9rem;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+
+                .lead-company {
+                    font-size: 0.8rem;
+                    color: var(--text-muted);
+                }
+
+                .lead-value {
+                    font-weight: 700;
+                    color: #10B981;
+                    font-size: 0.9rem;
+                    text-align: right;
+                }
+
+                /* Goals Progress */
+                .goals-list {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 16px;
+                }
 
                 .goal-item {
-                    background: var(--bg-body);
                     padding: 16px;
-                    border-radius: 12px;
-                    margin-bottom: 12px;
+                    background: var(--bg-body);
+                    border-radius: 14px;
                 }
-                
-                .goal-item:last-child { margin-bottom: 0; }
-                
+
                 .goal-header {
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
                     margin-bottom: 10px;
                 }
-                
+
                 .goal-name {
                     font-weight: 600;
-                    font-size: 0.9rem;
                     color: var(--text-main);
+                    font-size: 0.9rem;
                 }
-                
+
                 .goal-percent {
                     font-weight: 700;
-                    font-size: 0.85rem;
-                    color: #10B981;
+                    font-size: 0.9rem;
                 }
-                
-                .goal-bar {
+
+                .goal-percent.low { color: #EF4444; }
+                .goal-percent.mid { color: #F59E0B; }
+                .goal-percent.high { color: #10B981; }
+
+                .goal-progress-bar {
                     height: 8px;
                     background: var(--border-color);
-                    border-radius: 4px;
+                    border-radius: 10px;
                     overflow: hidden;
                 }
-                
-                .goal-fill {
+
+                .goal-progress-fill {
                     height: 100%;
-                    background: linear-gradient(90deg, #10B981, #34D399);
-                    border-radius: 4px;
+                    border-radius: 10px;
                     transition: width 0.5s ease;
                 }
-                
+
+                .goal-progress-fill.low { background: linear-gradient(90deg, #EF4444, #F87171); }
+                .goal-progress-fill.mid { background: linear-gradient(90deg, #F59E0B, #FBBF24); }
+                .goal-progress-fill.high { background: linear-gradient(90deg, #10B981, #34D399); }
+
                 .goal-values {
                     display: flex;
                     justify-content: space-between;
+                    margin-top: 8px;
                     font-size: 0.75rem;
                     color: var(--text-muted);
-                    margin-top: 8px;
                 }
 
                 .empty-state {
                     text-align: center;
-                    padding: 30px;
+                    padding: 30px 20px;
                     color: var(--text-muted);
                 }
-                
+
                 .empty-state i {
                     font-size: 2rem;
                     opacity: 0.3;
                     margin-bottom: 10px;
                 }
 
-                @media (max-width: 768px) {
-                    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-                    .dash-grid { grid-template-columns: 1fr; }
+                /* Dark mode adjustments */
+                .theme-dark .stat-card {
+                    background: var(--bg-card);
+                    border-color: var(--border-color);
+                }
+
+                .theme-dark .stat-card:hover {
+                    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+                }
+
+                .theme-dark .stat-value.money {
+                    background: linear-gradient(135deg, #34D399, #10B981);
+                    -webkit-background-clip: text;
+                    background-clip: text;
                 }
             </style>
 
-            <div class="dash-page">
-                <div style="margin-bottom: 24px;">
-                    <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--text-main); margin:0;">Dashboard</h2>
-                    <p style="color: var(--text-muted); margin-top:4px; font-size: 0.875rem;">Resumen general de tu negocio</p>
+            <div class="dashboard-page">
+                <div class="dashboard-header">
+                    <h2>Dashboard</h2>
+                    <p>Resumen de tu negocio</p>
                 </div>
 
-                <div class="kpi-grid">
-                    <div class="kpi-card">
-                        <div class="kpi-icon" style="background:rgba(59,130,246,0.15); color:#3B82F6;">👥</div>
-                        <div class="kpi-title">Clientes</div>
-                        <div class="kpi-value">${stats.clients}</div>
-                        <div class="kpi-trend">Cartera total</div>
+                <div id="dashboardContent">
+                    <div class="stats-grid">
+                        ${[1, 2, 3, 4, 5, 6].map(() => `
+                            <div class="stat-card" style="opacity: 0.5;">
+                                <div style="height: 120px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-spinner fa-spin" style="color: var(--text-muted);"></i>
+                                </div>
+                            </div>
+                        `).join('')}
                     </div>
-                    <div class="kpi-card">
-                        <div class="kpi-icon" style="background:rgba(139,92,246,0.15); color:#8B5CF6;">📥</div>
-                        <div class="kpi-title">Leads</div>
-                        <div class="kpi-value">${stats.leads}</div>
-                        <div class="kpi-trend">En seguimiento</div>
+                </div>
+            </div>
+        `;
+    },
+
+    init: async () => {
+        await DashboardModule.loadData();
+    },
+
+    loadData: async () => {
+        const container = document.getElementById('dashboardContent');
+        if (!container) return;
+
+        try {
+            const data = await DashboardService.getData();
+            const { stats, recentLeads, goalsProgress } = data;
+
+            // Format revenue
+            const revenueFormatted = Formatters.toCurrency(stats.revenue || 0, 'BOB');
+
+            container.innerHTML = `
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card blue">
+                        <div class="stat-icon"><i class="fas fa-users"></i></div>
+                        <div class="stat-label">Clientes</div>
+                        <div class="stat-value">${stats.clients || 0}</div>
+                        <div class="stat-subtitle">Cartera total</div>
                     </div>
-                    <div class="kpi-card">
-                        <div class="kpi-icon" style="background:rgba(245,158,11,0.15); color:#F59E0B;">🔨</div>
-                        <div class="kpi-title">Proyectos</div>
-                        <div class="kpi-value">${stats.projects}</div>
-                        <div class="kpi-trend">Activos</div>
+
+                    <div class="stat-card purple">
+                        <div class="stat-icon"><i class="fas fa-user-plus"></i></div>
+                        <div class="stat-label">Leads</div>
+                        <div class="stat-value">${stats.leads || 0}</div>
+                        <div class="stat-subtitle">En seguimiento</div>
                     </div>
-                    <div class="kpi-card">
-                        <div class="kpi-icon" style="background:rgba(16,185,129,0.15); color:#10B981;">💰</div>
-                        <div class="kpi-title">Estimación</div>
-                        <div class="kpi-value" style="color:#10B981; font-size:1.4rem;">${Formatters.toCurrency(stats.revenue, 'BOB')}</div>
-                        <div class="kpi-trend">Valor en pipeline</div>
+
+                    <div class="stat-card amber">
+                        <div class="stat-icon"><i class="fas fa-briefcase"></i></div>
+                        <div class="stat-label">Proyectos</div>
+                        <div class="stat-value">${stats.projects || 0}</div>
+                        <div class="stat-subtitle">Activos</div>
                     </div>
-                    <div class="kpi-card">
-                        <div class="kpi-icon" style="background:rgba(34,197,94,0.15); color:#22C55E;">🎯</div>
-                        <div class="kpi-title">Metas Cumplidas</div>
-                        <div class="kpi-value">${stats.goalsCompleted}</div>
-                        <div class="kpi-trend">De ${goalsProgress.length} totales</div>
+
+                    <div class="stat-card green">
+                        <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                        <div class="stat-label">Pipeline</div>
+                        <div class="stat-value money">${revenueFormatted}</div>
+                        <div class="stat-subtitle">Valor total</div>
                     </div>
-                    <div class="kpi-card">
-                        <div class="kpi-icon" style="background:rgba(239,68,68,0.15); color:#EF4444;">📋</div>
-                        <div class="kpi-title">Acciones Pendientes</div>
-                        <div class="kpi-value">${stats.pendingActions}</div>
-                        <div class="kpi-trend">En leads activos</div>
+
+                    <div class="stat-card rose">
+                        <div class="stat-icon"><i class="fas fa-trophy"></i></div>
+                        <div class="stat-label">Metas</div>
+                        <div class="stat-value">${stats.goalsCompleted || 0}</div>
+                        <div class="stat-subtitle">Completadas</div>
+                    </div>
+
+                    <div class="stat-card cyan">
+                        <div class="stat-icon"><i class="fas fa-tasks"></i></div>
+                        <div class="stat-label">Acciones</div>
+                        <div class="stat-value">${stats.pendingActions || 0}</div>
+                        <div class="stat-subtitle">Pendientes</div>
                     </div>
                 </div>
 
-                <div class="dash-grid">
-                    <div class="dash-section">
-                        <div class="section-header">
-                            <h3 class="section-title">Últimos Leads</h3>
-                            <a href="#/leads" style="color:var(--primary); font-size:0.8rem; font-weight:600; text-decoration:none;">Ver todos →</a>
-                        </div>
-                        <div id="recentActivityList">
-                            ${recentLeads.length > 0 ? recentLeads.map(l => `
-                                <div class="activity-item">
-                                    <div class="act-icon">${l.name ? l.name.charAt(0).toUpperCase() : '?'}</div>
-                                    <div class="act-info">
-                                        <div class="act-title">${l.name || 'Sin nombre'}</div>
-                                        <div class="act-meta">${l.company || 'Particular'} • ${l.status || 'Nuevo'}${l.actions && l.actions.length > 0 ? ` • ${l.actions.length} acciones` : ''}</div>
+                <!-- Sections -->
+                <div class="sections-grid">
+                    <!-- Recent Leads -->
+                    <div class="section-card">
+                        <h3 class="section-title leads">
+                            <i class="fas fa-bolt"></i>
+                            Leads Recientes
+                        </h3>
+                        <div class="leads-list">
+                            ${recentLeads.length > 0 ? recentLeads.map(lead => `
+                                <div class="lead-item">
+                                    <div class="lead-avatar">${(lead.name || 'L')[0].toUpperCase()}</div>
+                                    <div class="lead-info">
+                                        <div class="lead-name">${lead.name || 'Sin nombre'}</div>
+                                        <div class="lead-company">${lead.company || lead.source || 'Sin empresa'}</div>
                                     </div>
-                                    <div class="act-amount">${Formatters.toCurrency(l.total || 0, l.currency || 'BOB')}</div>
+                                    <div class="lead-value">${Formatters.toCurrency(lead.total || 0, lead.currency || 'BOB')}</div>
                                 </div>
                             `).join('') : `
                                 <div class="empty-state">
@@ -249,58 +416,52 @@ export const DashboardModule = {
                         </div>
                     </div>
 
-                    <div class="dash-section">
-                        <div class="section-header">
-                            <h3 class="section-title">Progreso de Metas</h3>
-                            <a href="#/goals" style="color:var(--primary); font-size:0.8rem; font-weight:600; text-decoration:none;">Ver todas →</a>
-                        </div>
-                        <div>
-                            ${goalsProgress.length > 0 ? goalsProgress.slice(0, 4).map(g => {
-            // Determinar si es leads (cantidad) o facturación (moneda)
-            const isLeads = g.type === 'leads';
-            const currencySymbol = { BOB: 'Bs.', USD: '$', EUR: '€' }[g.currency] || '';
-
-            // Formatear valores según tipo
-            const formatVal = (val) => {
-                if (isLeads) {
-                    return Math.round(val).toLocaleString('es-ES'); // Solo número
-                } else {
-                    return `${currencySymbol} ${val.toLocaleString('es-ES', { minimumFractionDigits: 2 })}`; // Con moneda
-                }
-            };
-
-            return `
+                    <!-- Goals Progress -->
+                    <div class="section-card">
+                        <h3 class="section-title goals">
+                            <i class="fas fa-bullseye"></i>
+                            Progreso de Metas
+                        </h3>
+                        <div class="goals-list">
+                            ${goalsProgress.length > 0 ? goalsProgress.map(goal => {
+                const pClass = goal.percent < 40 ? 'low' : goal.percent < 75 ? 'mid' : 'high';
+                const currentVal = goal.type === 'leads'
+                    ? goal.current
+                    : Formatters.toCurrency(goal.current, goal.currency || 'BOB');
+                const targetVal = goal.type === 'leads'
+                    ? goal.target
+                    : Formatters.toCurrency(goal.target, goal.currency || 'BOB');
+                return `
                                     <div class="goal-item">
                                         <div class="goal-header">
-                                            <span class="goal-name">${g.name}</span>
-                                            <span class="goal-percent">${g.percent}%</span>
+                                            <span class="goal-name">${goal.name || 'Meta'}</span>
+                                            <span class="goal-percent ${pClass}">${goal.percent || 0}%</span>
                                         </div>
-                                        <div class="goal-bar">
-                                            <div class="goal-fill" style="width: ${g.percent}%;"></div>
+                                        <div class="goal-progress-bar">
+                                            <div class="goal-progress-fill ${pClass}" style="width: ${goal.percent || 0}%"></div>
                                         </div>
                                         <div class="goal-values">
-                                            <span>${formatVal(g.current)}</span>
-                                            <span>${formatVal(g.target)}</span>
+                                            <span>${currentVal}</span>
+                                            <span>${targetVal}</span>
                                         </div>
                                     </div>
                                 `;
-        }).join('') : `
+            }).join('') : `
                                 <div class="empty-state">
-                                    <i class="fas fa-bullseye"></i>
-                                    <p>Sin metas definidas</p>
-                                    <a href="#/goals" style="color:var(--primary); font-size:0.85rem;">Crear primera meta</a>
+                                    <i class="fas fa-flag-checkered"></i>
+                                    <p>Sin metas configuradas</p>
                                 </div>
                             `}
                         </div>
                     </div>
                 </div>
-            </div>
-        `;
+            `;
 
-        return content;
+        } catch (error) {
+            console.error('Error loading dashboard:', error);
+            container.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Error cargando datos</p>';
+        }
     },
 
-    init: async () => {
-        // Lógica de inicialización si fuera necesaria
-    }
+    destroy: () => { }
 };
