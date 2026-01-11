@@ -132,6 +132,8 @@ export const DashboardModule = {
                     .dashboard-page {
                         padding: 0;
                         overflow-x: hidden;
+                        width: 100%;
+                        box-sizing: border-box;
                     }
 
                     .dashboard-header {
@@ -146,11 +148,15 @@ export const DashboardModule = {
                         grid-template-columns: repeat(2, 1fr);
                         gap: 12px;
                         margin-bottom: 20px;
+                        width: 100%;
+                        box-sizing: border-box;
                     }
 
                     .stat-card {
-                        padding: 16px;
+                        padding: 14px;
                         border-radius: 16px;
+                        box-sizing: border-box;
+                        min-width: 0;
                     }
 
                     .stat-card:hover {
@@ -158,52 +164,67 @@ export const DashboardModule = {
                     }
 
                     .stat-icon {
-                        width: 40px;
-                        height: 40px;
-                        font-size: 1rem;
-                        margin-bottom: 12px;
+                        width: 36px;
+                        height: 36px;
+                        font-size: 0.9rem;
+                        margin-bottom: 10px;
                     }
 
                     .stat-value {
-                        font-size: 1.5rem;
+                        font-size: 1.3rem;
                     }
 
                     .stat-value.money {
-                        font-size: 1.1rem;
+                        font-size: 1rem;
                         word-break: break-word;
                     }
 
                     .stat-label {
-                        font-size: 0.65rem;
+                        font-size: 0.6rem;
                     }
 
                     .stat-subtitle {
-                        font-size: 0.7rem;
+                        font-size: 0.65rem;
                     }
 
                     .sections-grid {
                         gap: 16px;
+                        width: 100%;
+                        box-sizing: border-box;
                     }
 
                     .section-card {
-                        padding: 16px;
+                        padding: 14px;
                         border-radius: 16px;
+                        width: 100%;
+                        box-sizing: border-box;
+                        overflow: hidden;
                     }
 
                     .section-title {
                         font-size: 0.9rem;
-                        margin-bottom: 16px;
+                        margin-bottom: 14px;
                     }
 
                     .section-title i {
-                        width: 28px;
-                        height: 28px;
-                        font-size: 0.8rem;
+                        width: 26px;
+                        height: 26px;
+                        font-size: 0.75rem;
+                        flex-shrink: 0;
+                    }
+
+                    .leads-list,
+                    .goals-list {
+                        width: 100%;
+                        box-sizing: border-box;
                     }
 
                     .lead-item {
-                        padding: 12px;
+                        padding: 10px;
                         gap: 10px;
+                        width: 100%;
+                        box-sizing: border-box;
+                        flex-wrap: wrap;
                     }
 
                     .lead-avatar {
@@ -212,28 +233,66 @@ export const DashboardModule = {
                         font-size: 0.85rem;
                     }
 
+                    .lead-info {
+                        flex: 1;
+                        min-width: 0;
+                        overflow: hidden;
+                    }
+
                     .lead-name {
-                        font-size: 0.85rem;
+                        font-size: 0.8rem;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
                     }
 
                     .lead-company {
-                        font-size: 0.75rem;
+                        font-size: 0.7rem;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
                     }
 
                     .lead-value {
-                        font-size: 0.8rem;
+                        font-size: 0.75rem;
+                        white-space: nowrap;
+                        flex-shrink: 0;
                     }
 
                     .goal-item {
                         padding: 12px;
+                        width: 100%;
+                        box-sizing: border-box;
+                    }
+
+                    .goal-header {
+                        flex-wrap: wrap;
+                        gap: 4px;
                     }
 
                     .goal-name {
-                        font-size: 0.85rem;
+                        font-size: 0.8rem;
+                        flex: 1;
+                        min-width: 0;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    }
+
+                    .goal-percent {
+                        font-size: 0.8rem;
+                        flex-shrink: 0;
                     }
 
                     .goal-values {
-                        font-size: 0.7rem;
+                        font-size: 0.65rem;
+                    }
+
+                    .goal-values span {
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        max-width: 45%;
                     }
                 }
 
@@ -243,7 +302,17 @@ export const DashboardModule = {
                     }
 
                     .stat-value.money {
-                        font-size: 1rem;
+                        font-size: 0.95rem;
+                    }
+
+                    .lead-item {
+                        flex-direction: column;
+                        align-items: flex-start;
+                    }
+
+                    .lead-value {
+                        align-self: flex-end;
+                        margin-top: -20px;
                     }
                 }
 
