@@ -1,5 +1,7 @@
 import { Store } from '../core/store.js';
 import { auth, db } from '../core/firebase-config.js';
+import { PullToRefresh } from '../utils/pull-to-refresh.js';
+import { CacheManager } from '../utils/cache-manager.js';
 
 // Cache para datos del usuario (evita múltiples consultas a Firestore)
 let cachedUserData = null;
@@ -226,6 +228,19 @@ export const Layout = {
                 }
             });
         }
+
+        // Inicializar Pull-to-Refresh para móviles
+        PullToRefresh.init(async () => {
+            // Limpiar todo el caché
+            CacheManager.clearAll();
+
+            // Recargar la página actual
+            const currentHash = window.location.hash || '#/dashboard';
+            window.location.hash = '';
+            setTimeout(() => {
+                window.location.hash = currentHash;
+            }, 50);
+        });
     },
 
     // Función para limpiar el cache (útil cuando cambia el usuario)
