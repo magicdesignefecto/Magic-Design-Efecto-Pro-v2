@@ -220,17 +220,20 @@ export const DashboardModule = {
                     }
 
                     .lead-item {
-                        padding: 10px;
-                        gap: 10px;
+                        padding: 12px;
+                        gap: 12px;
                         width: 100%;
                         box-sizing: border-box;
-                        flex-wrap: wrap;
+                        display: flex;
+                        flex-direction: row;
+                        align-items: center;
                     }
 
                     .lead-avatar {
-                        width: 36px;
-                        height: 36px;
-                        font-size: 0.85rem;
+                        width: 40px;
+                        height: 40px;
+                        font-size: 0.9rem;
+                        flex-shrink: 0;
                     }
 
                     .lead-info {
@@ -240,23 +243,26 @@ export const DashboardModule = {
                     }
 
                     .lead-name {
-                        font-size: 0.8rem;
+                        font-size: 0.85rem;
                         white-space: nowrap;
                         overflow: hidden;
                         text-overflow: ellipsis;
                     }
 
                     .lead-company {
-                        font-size: 0.7rem;
+                        font-size: 0.72rem;
                         white-space: nowrap;
                         overflow: hidden;
                         text-overflow: ellipsis;
                     }
 
                     .lead-value {
-                        font-size: 0.75rem;
+                        font-size: 0.8rem;
+                        font-weight: 700;
                         white-space: nowrap;
                         flex-shrink: 0;
+                        text-align: right;
+                        padding-left: 8px;
                     }
 
                     .goal-item {
@@ -305,14 +311,17 @@ export const DashboardModule = {
                         font-size: 0.95rem;
                     }
 
-                    .lead-item {
-                        flex-direction: column;
-                        align-items: flex-start;
+                    .lead-avatar {
+                        width: 36px;
+                        height: 36px;
+                    }
+
+                    .lead-name {
+                        font-size: 0.8rem;
                     }
 
                     .lead-value {
-                        align-self: flex-end;
-                        margin-top: -20px;
+                        font-size: 0.75rem;
                     }
                 }
 
