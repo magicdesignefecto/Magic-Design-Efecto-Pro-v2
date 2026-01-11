@@ -1,0 +1,150 @@
+/* --- LAYOUT PRINCIPAL (Grid CSS) --- */
+.app-layout {
+    display: grid;
+    grid-template-columns: var(--sidebar-width) 1fr;
+    grid-template-rows: var(--header-height) 1fr;
+    grid-template-areas: 
+        "sidebar header"
+        "sidebar main";
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+
+/* --- 1. SIDEBAR --- */
+.sidebar {
+    grid-area: sidebar;
+    background-color: var(--bg-sidebar);
+    border-right: 1px solid var(--border-light);
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    z-index: 30; /* Encima de todo */
+    transition: transform 0.3s ease;
+}
+
+.sidebar-logo {
+    height: 40px;
+    margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    color: var(--primary);
+}
+.sidebar-logo img { height: 100%; width: auto; }
+
+.nav-links { display: flex; flex-direction: column; gap: 8px; }
+
+.nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px;
+    color: var(--text-muted);
+    border-radius: var(--radius-md);
+    font-weight: 500;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+.nav-item:hover, .nav-item.active {
+    background-color: var(--primary-light);
+    color: var(--primary);
+}
+
+/* --- 2. HEADER --- */
+.header {
+    grid-area: header;
+    background-color: #fff;
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+    z-index: 10;
+}
+
+.menu-toggle {
+    display: none; /* Oculto en PC */
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-main);
+    padding: 5px;
+}
+
+.header-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.avatar {
+    width: 36px; height: 36px;
+    background-color: var(--primary);
+    color: white;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: bold; font-size: 0.9rem;
+}
+
+.btn-logout {
+    background: none; border: none; cursor: pointer;
+    color: var(--text-muted);
+    display: flex; align-items: center;
+}
+
+/* --- 3. MAIN --- */
+.main-content {
+    grid-area: main;
+    background-color: var(--bg-body);
+    padding: 30px;
+    overflow-y: auto;
+}
+
+/* Overlay oscuro para móvil */
+.sidebar-overlay {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.5);
+    z-index: 25;
+    display: none; /* Oculto por defecto */
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+/* --- RESPONSIVE (Móvil) --- */
+@media (max-width: 768px) {
+    .app-layout {
+        grid-template-columns: 1fr;
+        grid-template-areas: "header" "main";
+    }
+
+    /* Mostrar botón menú */
+    .menu-toggle { display: block; }
+
+    /* Ajustar Header */
+    .header { padding: 0 15px; }
+    .header-title { font-size: 1rem; }
+    
+    /* Ocultar nombre de usuario en móvil para espacio */
+    .user-name { display: none; }
+
+    /* Sidebar Oculto a la izquierda */
+    .sidebar {
+        position: fixed;
+        left: 0; top: 0; bottom: 0;
+        width: 260px;
+        transform: translateX(-100%);
+        box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+
+    /* Sidebar Abierto */
+    .sidebar.open { transform: translateX(0); }
+
+    /* Mostrar Overlay cuando menú abierto */
+    .sidebar-overlay.visible { display: block; opacity: 1; }
+}
