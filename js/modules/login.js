@@ -4,9 +4,48 @@ export const LoginModule = {
     render: async () => {
         return `
             <style>
-                @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css');
-                .login-container { min-height: 100vh; width: 100%; display: flex; align-items: center; justify-content: center; background: #F8FAFC; padding: 20px; box-sizing: border-box; }
-                .auth-card { background: white; width: 100%; max-width: 420px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid #E2E8F0; }
+                .login-container { 
+                    min-height: 100vh; 
+                    min-height: 100dvh;
+                    width: 100%; 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center; 
+                    background: #F8FAFC; 
+                    padding: 20px; 
+                    box-sizing: border-box;
+                    overflow-y: auto;
+                }
+
+                /* Mobile First - Sin espacio arriba */
+                @media (max-width: 480px) {
+                    .login-container {
+                        align-items: flex-start;
+                        padding: 10px;
+                        padding-top: 15px;
+                    }
+                    .auth-card {
+                        border-radius: 12px;
+                    }
+                    .auth-content {
+                        padding: 20px;
+                    }
+                    .logo-circle {
+                        width: 65px;
+                        height: 65px;
+                        margin-bottom: 15px;
+                    }
+                }
+
+                .auth-card { 
+                    background: white; 
+                    width: 100%; 
+                    max-width: 420px; 
+                    border-radius: 16px; 
+                    box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
+                    overflow: hidden; 
+                    border: 1px solid #E2E8F0; 
+                }
                 
                 /* TABS */
                 .auth-tabs { display: flex; border-bottom: 1px solid #E2E8F0; background: #F1F5F9; }
@@ -18,10 +57,24 @@ export const LoginModule = {
                 
                 .input-group { margin-bottom: 15px; text-align: left; position: relative; }
                 .input-label { display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 5px; }
-                .auth-input { width: 100%; padding: 12px; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 0.95rem; box-sizing: border-box; }
+                .auth-input { width: 100%; padding: 12px; padding-right: 45px; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 0.95rem; box-sizing: border-box; }
                 
                 .password-wrapper { position: relative; }
-                .toggle-pass { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #64748B; cursor: pointer; }
+                .toggle-pass { 
+                    position: absolute; 
+                    right: 12px; 
+                    top: 50%; 
+                    transform: translateY(-50%); 
+                    background: none; 
+                    border: none; 
+                    color: #94A3B8; 
+                    cursor: pointer;
+                    padding: 5px;
+                    font-size: 1rem;
+                    transition: color 0.2s;
+                }
+                .toggle-pass:hover { color: #475569; }
+                .toggle-pass i { pointer-events: none; }
                 
                 .btn-auth { width: 100%; padding: 12px; background: #2563EB; color: white; border: none; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 10px; }
                 .btn-auth:hover { background: #1D4ED8; }
@@ -52,7 +105,7 @@ export const LoginModule = {
                                 <label class="input-label">Contraseña</label>
                                 <div class="password-wrapper">
                                     <input type="password" id="loginPass" class="auth-input" required>
-                                    <button type="button" class="toggle-pass" onclick="toggleVisibility('loginPass')">👁️</button>
+                                    <button type="button" class="toggle-pass" data-target="loginPass"><i class="fas fa-eye"></i></button>
                                 </div>
                             </div>
                             <button type="submit" class="btn-auth">Ingresar</button>
@@ -81,7 +134,7 @@ export const LoginModule = {
                                 <label class="input-label">Contraseña</label>
                                 <div class="password-wrapper">
                                     <input type="password" id="regPass" class="auth-input" required>
-                                    <button type="button" class="toggle-pass" onclick="toggleVisibility('regPass')">👁️</button>
+                                    <button type="button" class="toggle-pass" data-target="regPass"><i class="fas fa-eye"></i></button>
                                 </div>
                             </div>
                             <button type="submit" class="btn-auth" style="background-color:#10B981;">Enviar Solicitud</button>
@@ -98,11 +151,24 @@ export const LoginModule = {
         const loginForm = document.getElementById('loginForm');
         const registerForm = document.getElementById('registerForm');
 
-        // Función global para ver contraseña
-        window.toggleVisibility = (id) => {
-            const input = document.getElementById(id);
-            input.type = input.type === 'password' ? 'text' : 'password';
-        };
+        // Toggle password visibility con icono profesional
+        document.querySelectorAll('.toggle-pass').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.getAttribute('data-target');
+                const input = document.getElementById(targetId);
+                const icon = btn.querySelector('i');
+
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    input.type = 'password';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            });
+        });
 
         if (tabLogin && tabRegister) {
             tabLogin.addEventListener('click', () => {
