@@ -80,12 +80,25 @@ document.addEventListener('DOMContentLoaded', () => {
                         console.warn("⛔ Usuario PENDIENTE detectado.");
 
                         // --- SOLUCIÓN AL CONFLICTO DE ALERTAS ---
-                        // Verificamos si estamos en flujo de registro (bandera global)
-                        // o si ya hay una alerta en pantalla. Si es así, NO lanzamos la alerta azul.
                         const isAlertOpen = document.querySelector('.swal2-container');
                         const isRegisterFlow = window.isRegisterFlow === true;
 
-                        if (!isAlertOpen && !isRegisterFlow) {
+                        // Si es flujo de registro, esperar a que el SweetAlert del registro termine
+                        if (isRegisterFlow) {
+                            console.log("📝 Flujo de registro detectado, esperando mensaje...");
+                            window.isRegisterFlow = false;
+
+                            // Esperar 5 segundos para que el usuario vea el mensaje de éxito
+                            await new Promise(r => setTimeout(r, 5000));
+
+                            // Ahora sí cerrar sesión
+                            await AuthService.logout();
+                            window.location.hash = '#/login';
+                            return;
+                        }
+
+                        // Si NO es flujo de registro, mostrar alerta azul normal
+                        if (!isAlertOpen) {
                             if (typeof Swal !== 'undefined') {
                                 Swal.fire({
                                     icon: 'info',
@@ -98,13 +111,10 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                         }
 
-                        // Limpiamos la bandera después de usarla
-                        window.isRegisterFlow = false;
-
-                        // Cerramos sesión igual por seguridad, pero respetamos el mensaje visual
+                        // Cerramos sesión
                         await AuthService.logout();
                         window.location.hash = '#/login';
-                        return; // Detenemos todo aquí
+                        return;
                     }
                 }
             } catch (error) {
